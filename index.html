@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UMRCGM · Wheat Growth Monitoring — Bihta, Patna</title>
+<meta name="description" content="Estimate wheat Leaf Area Index (LAI) and Canopy Chlorophyll Content (CCC) from Sentinel-1 SAR features using a UMRCGM-style neural network for Bihta, Patna, Bihar." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <div class="mark">UMRCGM</div>
+    <nav class="header-links">
+      <a href="#estimator">Estimator</a>
+      <a href="#stages">Growth stages</a>
+      <a href="#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <p class="eyebrow">Bihta &middot; Patna &middot; Bihar &middot; India</p>
+    <h1>Reading a wheat field<br>from radar alone.</h1>
+    <p class="hero-sub">
+      This estimator reproduces the UMRCGM model from Han et al. (2022), which fuses
+      two satellites: <strong>Sentinel-1 radar</strong> supplies the seven SAR features
+      below (backscatter, incidence angle, polarimetric covariance), while
+      <strong>Sentinel-3 optical imagery</strong> is where <strong>Leaf Area Index</strong>
+      and <strong>Canopy Chlorophyll Content</strong> are measured from in training.
+      Once trained, the model estimates what Sentinel-3 would show — from Sentinel-1
+      radar alone, which keeps working through cloud and fog.
+    </p>
+    <a class="hero-cta" href="#estimator">Try the estimator ↓</a>
+  </section>
+
+  <section id="estimator" class="estimator wrap">
+    <div class="panel inputs-panel">
+      <div class="panel-head">
+        <h2>SAR input features</h2>
+        <label class="stage-select">
+          <span>Growth stage</span>
+          <select id="stageSelect"></select>
+        </label>
+      </div>
+      <p class="stage-window" id="stageWindow"></p>
+
+      <div class="field-grid" id="fieldGrid"></div>
+
+      <div class="actions">
+        <button id="predictBtn" type="button">Estimate LAI &amp; CCC</button>
+        <button id="randomBtn" type="button" class="ghost">Use a sample field</button>
+      </div>
+    </div>
+
+    <div class="panel results-panel">
+      <h2>Predicted biophysical traits</h2>
+
+      <div class="result-card">
+        <div class="result-label">Leaf Area Index (LAI)</div>
+        <div class="result-value"><span id="laiValue">—</span><span class="unit">m&sup2; m&#8315;&sup2;</span></div>
+        <div class="result-bar"><div class="result-bar-fill" id="laiBar"></div></div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-label">Canopy Chlorophyll Content (CCC)</div>
+        <div class="result-value"><span id="cccValue">—</span><span class="unit">&micro;g cm&#8315;&sup2;</span></div>
+        <div class="result-bar"><div class="result-bar-fill ccc" id="cccBar"></div></div>
+      </div>
+
+      <div class="model-metrics" id="modelMetrics"></div>
+      <p class="hint" id="resultHint">Set your feature values and estimate to see a prediction here.</p>
+    </div>
+  </section>
+
+  <section id="stages" class="stages wrap">
+    <h2>Four stages of a Rabi wheat season</h2>
+    <p class="section-sub">Each stage carries its own SAR–biophysical relationship, so the model is trained separately per window.</p>
+    <div class="stage-cards" id="stageCards"></div>
+  </section>
+
+  <section id="about" class="about wrap">
+    <h2>What this reproduces, and what it doesn't</h2>
+    <div class="about-grid">
+      <div>
+        <h3>From the paper</h3>
+        <p>Han et al. (2022) combine Sentinel-1 radar and Sentinel-3 optical imagery in a deep network (UMRCGM). Sentinel-3's biophysical processor derives LAI and CCC from optical reflectance; the network then learns to predict those same values from Sentinel-1 SAR alone, so the field can be monitored even when cloud or fog blocks the optical sensor — common through Bihar's foggy Rabi winters.</p>
+      </div>
+      <div>
+        <h3>In this demo</h3>
+        <p>Earth Engine access needs your own authenticated Google account, so it can't run unattended here. This estimator is trained on the notebook's own physically-calibrated synthetic fallback data, using a compact network that mirrors UMRCGM's structure. Swap in your real Sentinel-1/-3 extracts and retrain for field-accurate results — see the README.</p>
+      </div>
+    </div>
+    <p class="citation">Han et al. (2022). Combining Sentinel-1 and -3 Imagery for Retrievals of Regional Multitemporal Biophysical Parameters Under a Deep Learning Framework. <em>IEEE JSTARS</em>, 15, 6985–6998.</p>
+  </section>
+
+</main>
+
+<footer class="site-footer wrap">
+  <span>UMRCGM demo &middot; runs entirely in your browser, no server required</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
