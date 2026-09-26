@@ -39,23 +39,18 @@ and re-run it — see "Training on your own data" below.
 ```
 umrcgm-app/
 ├── training/
-│   ├── train_and_export.py     # trains the model, writes public/model/umrcgm_weights.json
+│   ├── train_and_export.py  
 │   └── requirements.txt
 ├── public/
 │   ├── index.html
 │   ├── style.css
-│   ├── app.js                  # loads the weights JSON, runs the forward pass
+│   ├── app.js                 
 │   └── model/
-│       └── umrcgm_weights.json # already generated — committing this is fine
+│       └── umrcgm_weights.json
 ├── vercel.json
 └── README.md
 ```
 
-The weights file is already generated and committed, so you can deploy
-immediately without running Python at all. Re-run training only if you want
-to retrain on new data.
-
----
 
 ## 2. Run it locally (optional, before deploying)
 
@@ -68,79 +63,6 @@ Open http://localhost:8000 — pick a growth stage, adjust the SAR feature
 sliders (or click "Use a sample field"), and it predicts LAI and CCC
 instantly, all client-side.
 
----
-
-## 3. Push the project to GitHub
-
-```bash
-cd umrcgm-app
-git init
-git add .
-git commit -m "UMRCGM wheat growth monitoring demo"
-```
-
-Create an empty repository on GitHub (github.com → **New repository** →
-give it a name, don't initialize with a README), then:
-
-```bash
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo>.git
-git push -u origin main
-```
-
----
-
-## 4. Deploy to Vercel
-
-**Option A — Vercel dashboard (no CLI needed)**
-1. Go to https://vercel.com/new
-2. Choose **Import Git Repository** and select the repo you just pushed.
-3. Framework preset: choose **Other**.
-4. Leave build command empty and set **Output Directory** to `public`
-   (already set for you in `vercel.json`, so Vercel should pick it up
-   automatically — just confirm it before deploying).
-5. Click **Deploy**. You'll get a live `https://<project>.vercel.app` URL
-   in under a minute.
-
-**Option B — Vercel CLI**
-```bash
-npm install -g vercel
-cd umrcgm-app
-vercel login
-vercel        # first deploy, follow the prompts
-vercel --prod # promote to your production URL
-```
-
-Any future `git push` to `main` will auto-redeploy if you connected the
-GitHub repo in Option A. With the CLI, run `vercel --prod` again after
-changes.
-
----
-
-## 5. Training on your own data
-
-If you have real extracted Sentinel-1/-3 samples (from Step 8 of the
-notebook, `extract_gee_data()`), replace the synthetic generator:
-
-```bash
-cd training
-pip install -r requirements.txt
-```
-
-In `train_and_export.py`, swap `synthetic_data(stage)` for a loader that
-reads your CSV/DataFrame with columns:
-`sigma_VV, sigma_VH, LIA, C11, C12rel, C12img, C22, LAI, CCC`
-
-Then re-run:
-```bash
-python train_and_export.py
-```
-
-This overwrites `public/model/umrcgm_weights.json`. Commit and push — no
-frontend changes needed, `app.js` reads whatever stages/metrics are in the
-JSON.
-
----
 
 ## 6. Reference
 
